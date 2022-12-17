@@ -1,0 +1,59 @@
+---
+name: Copies dockertag edge from ghcr
+
+# from https://github.com/metcalfc/docker-action-examples/blob/main/app/Dockerfile
+# When its time to do a release do a full cross platform build for all supported
+# architectures and push all of them to Docker Hub.
+on:
+  push:
+    tags:
+      - "20[0-9][0-9][0-9][0-9][0-9][0-9]"
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      # GitHub Actions do not automatically checkout your projects. If you need the code
+      # you need to check it out.
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Prepare
+        id: prep
+        run: |
+          DOCKER_TAG=qs5779/python-multi:${GITHUB_REF_NAME}
+          GHCR_TAG=ghcr.io/${DOCKER_TAG}
+          echo ::set-output name=dockertag::${DOCKER_TAG}
+          echo ::set-output name=ghcrtag::${GHCR_TAG}
+
+      - name: Login to DockerHub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.WTF_ONE_FREE }}
+
+      - name: Login to Github Container Repository
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+
+      - # run tests using image from docker hub
+        name: Run Tests
+        run: TAGS=ghcr.io/qs5779/python-multi:edge make test
+
+      - # copy multiplatform image from dockerhub to quay and ghcr
+        name: Push Image to multiple registries
+        uses: akhilerm/tag-push-action@v2.1.0
+        with:
+          src: ghcr.io/qs5779/python-multi:edge
+          dst: |
+            ${{ steps.prep.outputs.ghcrtag }}
+            ghcr.io/qs5779/python-multi:latest
+            ${{ steps.prep.outputs.dockertag }}
+            qs5779/python-multi:latest
+...
