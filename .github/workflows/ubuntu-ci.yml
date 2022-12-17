@@ -1,5 +1,5 @@
 ---
-name: Edge Branch CI
+name: ubuntu Branch CI
 
 # from https://github.com/metcalfc/docker-action-examples/blob/main/app/Dockerfile
 # For all pushes to the edge branch run the tests and push the image to the
@@ -8,7 +8,7 @@ name: Edge Branch CI
 on:
   push:
     branches:
-      - edge
+      - 'ubuntu-[0-9].[0-9]+.[0-9]+'
 
 jobs:
   docker:
@@ -18,10 +18,18 @@ jobs:
       # you need to check it out.
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Get branch name (merge)
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})"
+      - name: Get python version
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: echo "PY_VERSION=$(echo ${{ env.BRANCH_NAME }} | sed -e 's/^ubuntu-//')"
       - name: Prepare
         id: prep
         run: |
-          DOCKER_TAGS=qs5779/python-multi:edge
+          DOCKER_TAGS=qs5779/python-testing:${{ env.BRANCH_NAME }}
           GHCR_TAGS=ghcr.io/$DOCKER_TAGS
           echo ::set-output name=dockertags::${DOCKER_TAGS}
           echo ::set-output name=ghcrtags::${GHCR_TAGS}
@@ -65,6 +73,7 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           context: ./src
           file: ./src/Dockerfile
+          build-args: PY_VERSION=${{ env.PY_VERSION }}
           push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.prep.outputs.dockertags }}
@@ -75,7 +84,7 @@ jobs:
         name: Run Tests
         run: TAGS=$(echo ${{ steps.prep.outputs.dockertags }} | tr ',' ' ') make test
 
-      - # copy multiplatform image from dockerhub to quay and ghcr
+      - # copy multiplatform image from dockerhub to ghcr
         name: Push Image to multiple registries
         uses: akhilerm/tag-push-action@v2.1.0
         with:
