@@ -1,0 +1,13 @@
+---
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  - repo: https://github.com/petalmd/dockerfile-pre-commit
+    rev: 'v1.0'  # Use the revision rev you want to point at
+    hooks:
+      - id: dockerlint
+  - repo: 'https://github.com/adrienverge/yamllint'
+    rev: v1.28.0
+    hooks:
+      - id: yamllint
+...
