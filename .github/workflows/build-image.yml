@@ -23,8 +23,8 @@ jobs:
         id: imageinfo
         shell: bash
         run: |
-          echo "pyversion=$(echo "${{ github.ref }}" | cut -f 2 -d '-')" >> $GITHUB_OUTPUT
-          echo "distronm=$(echo "${{ github.ref }}" | cut -f 1 -d '-')" >> $GITHUB_OUTPUT
+          echo "pyversion=$(echo "${GITHUB_REF##*/}" | cut -f 2 -d '-')" >> $GITHUB_OUTPUT
+          echo "distronm=$(echo "${GITHUB_REF##*/}" | cut -f 1 -d '-')" >> $GITHUB_OUTPUT
 
       - name: Prepare
         id: prep
