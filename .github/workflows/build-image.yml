@@ -21,14 +21,15 @@ jobs:
 
       - name: Get image info
         id: imageinfo
+        shell: bash
         run: |
-          echo "::set-output name=pyversion::`echo "${{ github.ref }}" | cut -f 2 -d '-'`"
-          echo "::set-output name=distronm::`echo "${{ github.ref }}" | cut -f 1 -d '-'`"
+          echo "pyversion=$(echo "${{ github.ref }}" | cut -f 2 -d '-')" >> $GITHUB_OUTPUT
+          echo "distronm=$(echo "${{ github.ref }}" | cut -f 1 -d '-')" >> $GITHUB_OUTPUT
 
       - name: Prepare
         id: prep
         run: |
-          DTAG=${{ steps.getjiraticket.outputs.distronm }}-${{ steps.getjiraticket.outputs.pyversion }}
+          DTAG=${{ steps.imageinfo.outputs.distronm }}-${{ steps.imageinfo.outputs.pyversion }}
           DOCKER_TAG=qs5779/python-testing:${TAG}
           GHCR_TAG=ghcr.io/$DOCKER_TAG
           echo ::set-output name=dockertags::${DOCKER_TAG}
