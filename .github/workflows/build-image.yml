@@ -30,7 +30,7 @@ jobs:
         id: prep
         run: |
           DTAG=${{ steps.imageinfo.outputs.distronm }}-${{ steps.imageinfo.outputs.pyversion }}
-          DOCKER_TAGS=qs5779/python-testing:${TAG}
+          DOCKER_TAGS=qs5779/python-testing:${DTAG}
           GHCR_TAGS=ghcr.io/$DOCKER_TAGS
           echo "dockertags=${DOCKER_TAGS}" >> $GITHUB_OUTPUT
           echo "ghcrtags=${GHCR_TAGS}" >> $GITHUB_OUTPUT
