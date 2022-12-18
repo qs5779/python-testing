@@ -18,21 +18,21 @@ jobs:
       # you need to check it out.
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Get branch name (merge)
-        if: github.event_name != 'pull_request'
-        shell: bash
-        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})"
-      - name: Get python version
-        if: github.event_name != 'pull_request'
-        shell: bash
-        run: echo "PY_VERSION=$(echo ${{ env.BRANCH_NAME }} | sed -e 's/^ubuntu-//')"
+
+      - name: Get image info
+        id: imageinfo
+        run: |
+          echo "::set-output name=pyversion::`echo "${{ github.ref }}" | cut -f 2 -d '-'`"
+          echo "::set-output name=distronm::`echo "${{ github.ref }}" | cut -f 1 -d '-'`"
+
       - name: Prepare
         id: prep
         run: |
-          DOCKER_TAGS=qs5779/python-testing:${{ env.BRANCH_NAME }}
-          GHCR_TAGS=ghcr.io/$DOCKER_TAGS
-          echo ::set-output name=dockertags::${DOCKER_TAGS}
-          echo ::set-output name=ghcrtags::${GHCR_TAGS}
+          DTAG=${{ steps.getjiraticket.outputs.distronm }}-${{ steps.getjiraticket.outputs.pyversion }}
+          DOCKER_TAG=qs5779/python-testing:${TAG}
+          GHCR_TAG=ghcr.io/$DOCKER_TAG
+          echo ::set-output name=dockertags::${DOCKER_TAG}
+          echo ::set-output name=ghcrtags::${GHCR_TAG}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -72,8 +72,8 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: ./src
-          file: ./src/Dockerfile
-          build-args: PY_VERSION=${{ env.PY_VERSION }}
+          file: ./src/Dockerfile.${{ steps.imageinfo.outputs.distronm }}
+          build-args: PY_VERSION=${{ steps.imageinfo.outputs.pyversion }}
           push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.prep.outputs.dockertags }}
