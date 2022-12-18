@@ -30,10 +30,10 @@ jobs:
         id: prep
         run: |
           DTAG=${{ steps.imageinfo.outputs.distronm }}-${{ steps.imageinfo.outputs.pyversion }}
-          DOCKER_TAG=qs5779/python-testing:${TAG}
-          GHCR_TAG=ghcr.io/$DOCKER_TAG
-          echo ::set-output name=dockertags::${DOCKER_TAG}
-          echo ::set-output name=ghcrtags::${GHCR_TAG}
+          DOCKER_TAGS=qs5779/python-testing:${TAG}
+          GHCR_TAGS=ghcr.io/$DOCKER_TAGS
+          echo "dockertags=${DOCKER_TAGS}" >> $GITHUB_OUTPUT
+          echo "ghcrtags=${GHCR_TAGS}" >> $GITHUB_OUTPUT
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -82,8 +82,8 @@ jobs:
           cache-to: type=gha,mode=max
 
       - # run tests using image from docker hub
-        name: Run Tests
-        run: TAGS=$(echo ${{ steps.prep.outputs.dockertags }} | tr ',' ' ') make test
+        # name: Run Tests
+        # run: TAGS=$(echo ${{ steps.prep.outputs.dockertags }} | tr ',' ' ') make test
 
       - # copy multiplatform image from dockerhub to ghcr
         name: Push Image to multiple registries
