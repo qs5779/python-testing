@@ -1,5 +1,5 @@
 ---
-name: ubuntu Branch CI
+name: amd/arm 64 Branch CI
 
 # from https://github.com/metcalfc/docker-action-examples/blob/main/app/Dockerfile
 # For all pushes to the edge branch run the tests and push the image to the
@@ -12,7 +12,6 @@ on:
       - 'ubuntu20.04-[0-9].[0-9]+.[0-9]+'
       - 'rocky8-[0-9].[0-9]+.[0-9]+'
       - 'rocky9-[0-9].[0-9]+.[0-9]+'
-      - 'arch-[0-9].[0-9]+.[0-9]+'
 
 jobs:
   docker:
@@ -85,9 +84,9 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # - # run tests using image from docker hub
-      #   name: Run Tests
-      #   run: TAGS=$(echo ${{ steps.prep.outputs.dockertags }} | tr ',' ' ') make test
+      - # run tests using image from docker hub
+        name: Run Tests
+        run: DTAG=$(echo ${{ steps.prep.outputs.dockertags }} | tr ',' ' ') make test
 
       - # copy multiplatform image from dockerhub to ghcr
         name: Push Image to multiple registries
