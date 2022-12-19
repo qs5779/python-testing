@@ -81,9 +81,9 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # - # run tests using image from docker hub
-      #   name: Run Tests
-      #   run: TAGS=$(echo ${{ steps.prep.outputs.dockertags }} | tr ',' ' ') make test
+      - # run tests using image from docker hub
+        name: Run Tests
+        run: DTAG=$(echo ${{ steps.prep.outputs.dockertags }} | tr ',' ' ') make test
 
       - # copy multiplatform image from dockerhub to ghcr
         name: Push Image to multiple registries
