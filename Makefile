@@ -10,24 +10,10 @@ vars:
 	@echo DISTRO IS $(DISTRO)
 	@echo PYVERS IS $(PYVERS)
 
-# .PHONY: clean
-# clean:
-# 	rm -fr dist build wtftools.egg-info
-
 .PHONY: build
 build:
 	docker build --tag poetry-$(DISTRO)-$(PYVERS) --build-arg PY_VERSION=$(PYVERS) -f ./src/Dockerfile.$(DISTRO) ./src
 
-# .PHONY: install
-# install:
-# 	pip install dist/wtftools-$(VERSION)-py3-none-any.whl
-
-# .PHONY: uninstall
-# uninstall:
-# 	pip uninstall -y wtftools
-
-# .PHONY: reinstall
-# reinstall: uninstall clean build install
 
 .PHONY: test
 test:
