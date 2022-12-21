@@ -38,6 +38,7 @@ RUN apt-get update \
     libxml2-dev \
     libxmlsec1-dev \
     git \
+    vim \
     ca-certificates \
     libffi-dev \
     && apt-get clean autoclean \

@@ -15,7 +15,7 @@ LABEL org.opencontainers.image.authors="Quien Sabe <qs5779@mail.com>"
 LABEL org.opencontainers.image.description="python version ${PYTHON_VERSION} with peotry installed into Ubuntu LTS 20.04"
 
 # Install dependencies.
-RUN pacman -Sy --noconfirm --needed base-devel openssl zlib xz tk git
+RUN pacman -Sy --noconfirm --needed base-devel openssl zlib xz tk git vim
 
 RUN pacman -Scc --noconfirm
 
