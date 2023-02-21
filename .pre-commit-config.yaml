@@ -1,13 +1,25 @@
 ---
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
+default_install_hook_types: ["pre-commit", "commit-msg"]
+default_stages: ["commit"]
 repos:
   - repo: https://github.com/petalmd/dockerfile-pre-commit
     rev: 'v1.0'  # Use the revision rev you want to point at
     hooks:
       - id: dockerlint
+
   - repo: 'https://github.com/adrienverge/yamllint'
     rev: v1.28.0
     hooks:
       - id: yamllint
+
+  - repo: local
+    hooks:
+      - id: commit-msg
+        name: conventional commit messages
+        language: pygrep
+        entry: '^(chore|test|feat|fix|build|docs|refactor)!?: ((?!.*(ing))(?!.*(ed))).*$'
+        args: [--multiline, --negate]
+        stages: [commit-msg]
 ...
