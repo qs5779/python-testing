@@ -18,7 +18,7 @@ LABEL org.opencontainers.image.description="python version ${PYTHON_VERSION} wit
 RUN /bin/dnf -y install make gcc zlib-devel bzip2 bzip2-devel \
   readline-devel sqlite sqlite-devel openssl-devel tk-devel \
   libffi-devel xz-devel libuuid-devel gdbm-devel libnsl2-devel \
-  sudo git findutils
+  sudo git findutils vim
 
 RUN /bin/dnf -y clean all
 
