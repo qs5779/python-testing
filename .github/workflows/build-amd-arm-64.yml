@@ -90,7 +90,7 @@ jobs:
 
       - # copy multiplatform image from dockerhub to ghcr
         name: Push Image to multiple registries
-        uses: akhilerm/tag-push-action@v2.1.0
+        uses: akhilerm/tag-push-action@v2.2.0
         with:
           src: ${{ steps.prep.outputs.dockertags }}
           dst: ${{ steps.prep.outputs.ghcrtags }}
